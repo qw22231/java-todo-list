@@ -20,10 +20,31 @@ public class TaskService {
         return new ArrayList<>(tasks);
     }
 
+    private String validateTitle(
+            String title,
+            String errorMessage) {
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+
+        return title.strip();
+    }
+
+    private void validateId(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException(
+                    "ID 必須大於 0！");
+        }
+    }
+
     // Create：新增任務
     public Task addTask(String title) {
 
-        Task newTask = new Task(nextTaskId, title);
+        String cleanTitle = validateTitle(
+                title,
+                "任務名稱不能為空！");
+
+        Task newTask = new Task(nextTaskId, cleanTitle);
 
         tasks.add(newTask);
 
@@ -34,6 +55,8 @@ public class TaskService {
 
     // Find：根據 ID 尋找任務
     public Task findTaskById(int id) {
+
+        validateId(id);
 
         for (Task task : tasks) {
 
@@ -54,7 +77,11 @@ public class TaskService {
             return false;
         }
 
-        task.setTitle(newTitle);
+        String cleanTitle = validateTitle(
+                newTitle,
+                "新名稱不能為空！");
+
+        task.setTitle(cleanTitle);
 
         return true;
     }
